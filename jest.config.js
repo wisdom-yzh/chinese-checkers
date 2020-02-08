@@ -7,6 +7,9 @@ module.exports = {
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
   testPathIgnorePatterns: ['/lib/', '/node_modules/'],
   moduleFileExtensions: ['ts', 'js'],
+  moduleNameMapper: {
+    '^lodash-es$': 'lodash',
+  },
   collectCoverageFrom: ['packages/**/src/**/*.ts', '!**/node_modules/**'],
   globals: {
     'ts-jest': {

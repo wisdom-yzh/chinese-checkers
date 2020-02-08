@@ -1,3 +1,2 @@
-export interface ICheckerView {
-  
-}
+export * from './canvas';
+export * from './views';

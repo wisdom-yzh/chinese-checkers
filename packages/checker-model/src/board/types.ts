@@ -1,4 +1,4 @@
-import { IFaction, FactionIdentity } from '../faction';
+import { FactionIdentity } from '../faction';
 
 export type Coordinate = {
   x: number;

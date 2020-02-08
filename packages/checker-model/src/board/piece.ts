@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { IPiece, Coordinate } from './types';
 import { checkBoardRange } from '../utils';
 import { IFaction, FactionIdentity } from '../faction';

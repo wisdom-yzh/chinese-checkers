@@ -1,3 +1,4 @@
 packages/**/lib
 packages/**/dist
+**/webpack.config.js
 **/node_modules

@@ -5,6 +5,7 @@
   "author": "wisdom <wisdom.yinzh@gmail.com>",
   "homepage": "",
   "license": "ISC",
+  "module": "lib/index.js",
   "main": "lib/index.js",
   "directories": {
     "lib": "lib",
@@ -18,5 +19,8 @@
   },
   "scripts": {
     "build": "tsc"
+  },
+  "dependencies": {
+    "checker-model": "^0.0.0"
   }
 }

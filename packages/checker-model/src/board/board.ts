@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { IBoard, Slot, Coordinate, MoveStep, SlotCategory, IPiece } from './types';
 import { IFaction } from '../faction';
 import { MATRIX_SIZE, FACTION_SIZE, FACTION_COORDINATES, MOVE_DIRECTIONS } from '../constants';

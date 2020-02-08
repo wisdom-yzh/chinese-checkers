@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import { IGameModel, GameStatus, Player } from './types';
 import { IBoard, ChessBoard, MoveStep } from '../board';
 import { Faction, FactionIdentity, IFaction } from '../faction';
