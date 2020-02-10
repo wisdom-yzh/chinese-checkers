@@ -3,10 +3,18 @@ const path = require('path');
 const dist = path.resolve(__dirname, 'dist');
 
 module.exports = {
-  entry: './lib/index.js',
+  entry: './src/index.ts',
   output: {
     filename: '[name].[hash].js',
     path: dist,
+  },
+  module: {
+    rules: [
+      { test: /\.ts$/, loader: 'ts-loader' },
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -14,6 +22,7 @@ module.exports = {
     }),
   ],
   devServer: {
+    open: true,
     contentBase: dist,
     progress: true,
     compress: true,

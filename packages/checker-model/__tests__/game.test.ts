@@ -56,11 +56,12 @@ describe('game', () => {
   it('check winner', () => {
     const faction = new Faction(0).initPieces(FACTION_COORDINATES[3]);
     const game = new GameModel([]);
+    const originCoordinate = faction.getPieces()[0].getCoordinate();
     faction.getPieces()[0].moveTo({ x: 8, y: 8 });
     game.resetByFaction([faction]);
 
     expect(game.start()).toBeTruthy();
-    game.getBoard().move({ x: 8, y: 8 }, { x: 9, y: 13 });
+    game.getBoard().move({ x: 8, y: 8 }, originCoordinate);
     expect(game.updateStatus()).toEqual('end');
     expect(game.getCurrentPlayer().status).toEqual('win');
   });

@@ -105,10 +105,10 @@ export class GameModel implements IGameModel {
   }
 
   private cyclePlayer(): void {
-    let nextPlayer: number;
+    let nextPlayer: number = this.currentPlayerIndex;
 
     do {
-      nextPlayer = (this.currentPlayerIndex + 1) % this.players.length;
+      nextPlayer = (nextPlayer + 1) % this.players.length;
     } while (this.players[nextPlayer].status === 'win');
 
     this.currentPlayerIndex = nextPlayer;

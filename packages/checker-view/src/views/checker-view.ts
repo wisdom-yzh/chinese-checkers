@@ -86,7 +86,7 @@ export abstract class CheckerView<TCoordinate, TColor> extends AbstractView<IBoa
     this.on('click', handler);
   }
 
-  /** eslint-disable-next-line */
+  // eslint-disable-next-line
   protected checkUpdate(props: IBoard, nextProps: IBoard): boolean {
     return true;
   }

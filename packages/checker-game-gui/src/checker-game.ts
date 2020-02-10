@@ -1,18 +1,23 @@
 import { isEmpty, isEqual } from 'lodash-es';
-import { GameModel, Coordinate, FactionIdentity, IPiece } from 'checker-model';
+import { GameModel, Coordinate, FactionIdentity, IPiece, MoveStep } from 'checker-model';
 import { HTMLCanvas2d, CanvasEventHandler, CheckerView } from 'checker-view';
+import { IPredictor, SimplePredictor } from 'checker-ai';
 import { CheckerViewGui } from './checker-view-gui';
 
 export class CheckerGameGui {
   private canvas: HTMLCanvas2d;
   private model?: GameModel;
   private view?: CheckerView<Coordinate, string>;
+  private predictor?: IPredictor;
+
+  private aiPlayers: FactionIdentity[] = [];
 
   private focus?: Coordinate;
   private mentions?: Coordinate[];
 
   private handler: CanvasEventHandler<Coordinate> = (coordinate: Coordinate) => {
-    if ((this.model as GameModel).getStatus() === 'end') {
+    const model = this.model as GameModel;
+    if (model.getStatus() === 'end' || this.aiPlayers.indexOf(model.getCurrentPlayer().faction.getId()) !== -1) {
       return;
     }
 
@@ -30,17 +35,26 @@ export class CheckerGameGui {
     this.canvas = new HTMLCanvas2d(canvasElement);
   }
 
-  start(players: FactionIdentity[]): boolean {
+  start(players: FactionIdentity[], aiPlayers: FactionIdentity[] = []): boolean {
     this.model = new GameModel(players);
     this.view = new CheckerViewGui(this.model.getBoard(), this.canvas);
     this.view.onClick(this.handler);
+
+    this.aiPlayers = aiPlayers;
+    if (!isEmpty(aiPlayers)) {
+      this.predictor = new SimplePredictor(this.model);
+    }
 
     if (!this.model.start()) {
       return false;
     }
 
+    if (!this.view.render()) {
+      return false;
+    }
+
     window.alert('game start');
-    return this.view.render();
+    return this.go();
   }
 
   private focusPiece(coord: Coordinate): boolean {
@@ -88,7 +102,6 @@ export class CheckerGameGui {
 
     const view = this.view as CheckerView<Coordinate, string>;
     const model = this.model as GameModel;
-
     model.getBoard().move(this.focus as Coordinate, coord);
     if (!view.updateProps(model.getBoard())) {
       return false;
@@ -100,7 +113,30 @@ export class CheckerGameGui {
     return view.render();
   }
 
-  private updateState(): void {
+  private go(): boolean {
+    const model = this.model as GameModel;
+    if (model.getStatus() === 'end') {
+      window.alert('game end');
+      return false;
+    }
+
+    const view = this.view as CheckerView<Coordinate, string>;
+    const currentPlayer = model.getCurrentPlayer();
+    const factionId = currentPlayer.faction.getId();
+    if (this.aiPlayers.indexOf(factionId) !== -1) {
+      setTimeout(() => {
+        const { from, to } = (this.predictor as IPredictor).predict(factionId) as MoveStep;
+        model.getBoard().move(from, to);
+        view.updateProps(model.getBoard());
+        view.render();
+        this.updateState();
+      }, 100);
+    }
+
+    return true;
+  }
+
+  private updateState(): boolean {
     const model = this.model as GameModel;
 
     if (model.getCurrentPlayer().faction.checkWin()) {
@@ -110,6 +146,9 @@ export class CheckerGameGui {
     const gameStatus = model.updateStatus();
     if (gameStatus === 'end') {
       window.alert('game end');
+      return true;
     }
+
+    return this.go();
   }
 }
