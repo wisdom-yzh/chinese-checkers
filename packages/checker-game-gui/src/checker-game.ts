@@ -22,13 +22,19 @@ export class CheckerGameGui {
     }
 
     if (!this.focus) {
-      this.focusPiece(coordinate);
-      return;
+      return this.setFocus(coordinate);
     }
 
-    if (this.tryToMovePiece(coordinate)) {
-      return this.updateState();
+    if (isEqual(this.focus, coordinate)) {
+      return true;
     }
+
+    const mentions = this.mentions as Coordinate[];
+    if (isEmpty(mentions) || mentions.find(mention => isEqual(mention, coordinate)) === undefined) {
+      return this.removeFocusAndMentions() && this.setFocus(coordinate);
+    }
+
+    return this.moveByPlayer(coordinate);
   };
 
   constructor(canvasElement: HTMLCanvasElement) {
@@ -57,30 +63,17 @@ export class CheckerGameGui {
     return this.go();
   }
 
-  private focusPiece(coord: Coordinate): boolean {
+  private setFocus(coord: Coordinate): boolean {
     const view = this.view as CheckerView<Coordinate, string>;
     const model = this.model as GameModel;
 
-    if (!isEmpty(this.focus)) {
-      if (isEqual(this.focus, coord)) {
-        return true;
-      }
-      if (!view.setFocusStatus(this.focus as Coordinate, 'normal')) {
-        return false;
-      }
-    }
-
+    // adding focus
     if (!view.setFocusStatus(coord, 'focus')) {
       return false;
     }
     this.focus = coord;
 
-    if (!isEmpty(this.mentions)) {
-      (this.mentions as Coordinate[]).forEach(mentionCoord => {
-        view.setFocusStatus(mentionCoord, 'normal');
-      });
-    }
-
+    // adding mentions
     const piece = model.getBoard().get(coord) as IPiece;
     if (piece !== null && piece.getFactionId() === model.getCurrentPlayer().faction.getId()) {
       this.mentions = model.getBoard().getAvailableJumpPosition(coord);
@@ -93,24 +86,20 @@ export class CheckerGameGui {
     return true;
   }
 
-  private tryToMovePiece(coord: Coordinate): boolean {
-    const mentions = this.mentions as Coordinate[];
-    if (isEmpty(mentions) || mentions.find(mention => isEqual(mention, coord)) === undefined) {
-      this.focusPiece(coord);
-      return false;
-    }
-
+  private removeFocusAndMentions(): boolean {
     const view = this.view as CheckerView<Coordinate, string>;
-    const model = this.model as GameModel;
-    model.getBoard().move(this.focus as Coordinate, coord);
-    if (!view.updateProps(model.getBoard())) {
-      return false;
+
+    let status = view.setFocusStatus(this.focus as Coordinate, 'normal');
+    this.focus = undefined;
+
+    if (!isEmpty(this.mentions)) {
+      (this.mentions as Coordinate[]).forEach(mentionCoord => {
+        status = status && view.setFocusStatus(mentionCoord, 'normal');
+      });
+      this.mentions = undefined;
     }
 
-    this.focus = undefined;
-    this.mentions = undefined;
-
-    return view.render();
+    return status;
   }
 
   private go(): boolean {
@@ -120,17 +109,10 @@ export class CheckerGameGui {
       return false;
     }
 
-    const view = this.view as CheckerView<Coordinate, string>;
     const currentPlayer = model.getCurrentPlayer();
     const factionId = currentPlayer.faction.getId();
     if (this.aiPlayers.indexOf(factionId) !== -1) {
-      setTimeout(() => {
-        const { from, to } = (this.predictor as IPredictor).predict(factionId) as MoveStep;
-        model.getBoard().move(from, to);
-        view.updateProps(model.getBoard());
-        view.render();
-        this.updateState();
-      }, 100);
+      this.moveByAIPlayer(factionId);
     }
 
     return true;
@@ -150,5 +132,32 @@ export class CheckerGameGui {
     }
 
     return this.go();
+  }
+
+  private moveByPlayer(coord: Coordinate): boolean {
+    const from = this.focus as Coordinate;
+
+    this.focus = undefined;
+    this.mentions = undefined;
+
+    return this.movePieceAndRender(from, coord);
+  }
+
+  private moveByAIPlayer(factionId: FactionIdentity, timeout = 1000): void {
+    setTimeout(() => {
+      const { from, to } = (this.predictor as IPredictor).predict(factionId) as MoveStep;
+      this.movePieceAndRender(from, to);
+    }, timeout);
+  }
+
+  private movePieceAndRender(from: Coordinate, to: Coordinate): boolean {
+    const model = this.model as GameModel;
+    const view = this.view as CheckerView<Coordinate, string>;
+
+    if (!model.getBoard().move(from, to) || !view.updateProps(model.getBoard()) || !view.render()) {
+      return false;
+    }
+
+    return this.updateState();
   }
 }

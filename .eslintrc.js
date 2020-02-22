@@ -9,7 +9,7 @@ module.exports =  {
     sourceType: 'module',
   },
   rules: {
-    'complexity': ['error', 8],
+    'complexity': ['error', 10],
     'max-depth': ['error', 3],
     'max-lines-per-function': ['error', 50],
     'max-nested-callbacks': ['error', 3],

@@ -1,12 +1,12 @@
 import { isEmpty } from 'lodash-es';
-import { FactionIdentity, MoveStep, GameModel, IFaction, Coordinate, IPiece } from 'checker-model';
+import { FactionIdentity, MoveStep, IGameModel, IFaction, Coordinate, IPiece } from 'checker-model';
 import { AbstractPredictor } from './abstract-predictor';
 import { MovePrediction } from './types';
 
 const dist = (a: Coordinate, b: Coordinate): number => Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 
 export class SimplePredictor extends AbstractPredictor {
-  constructor(model: GameModel) {
+  constructor(model: IGameModel) {
     super(model);
   }
 
