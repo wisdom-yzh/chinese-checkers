@@ -17,7 +17,7 @@ export class MultiStepPredictor extends SimplePredictor {
     if (isEmpty(predictMoveSteps)) {
       return null;
     }
-    console.log(predictMoveSteps);
+
     return (sample<MovePrediction>(predictMoveSteps) as MovePrediction).step as MoveStep;
   }
 
@@ -29,7 +29,7 @@ export class MultiStepPredictor extends SimplePredictor {
     if (
       currentDepth < this.maxDepth &&
       faction.getPieces().filter(piece => piece.getStatus() === 'goal').length < 6 &&
-      maxScore < 6
+      (maxScore < 8 || currentDepth != 0)
     ) {
       predictions.forEach(prediction => {
         const { from, to } = prediction.step as MoveStep;

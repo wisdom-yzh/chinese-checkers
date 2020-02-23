@@ -81,7 +81,7 @@ export class SlotElement<TCoordinate, TColor> extends AbstractElement<SlotProps<
     const canvas = this.getCanvas();
     const props = this.getProps();
 
-    if (props.status === 'normal') {
+    if (props.status === 'normal' || props.status === 'mention') {
       return true;
     }
 
