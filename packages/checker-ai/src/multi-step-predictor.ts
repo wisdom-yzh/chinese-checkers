@@ -1,5 +1,15 @@
 import { cloneDeep, sample, isEmpty, maxBy } from 'lodash-es';
-import { IGameModel, FactionIdentity, IPiece, IFaction, MoveStep, IBoard, Coordinate, Player } from 'checker-model';
+import {
+  IGameModel,
+  FactionIdentity,
+  IPiece,
+  IFaction,
+  MoveStep,
+  IBoard,
+  Coordinate,
+  Player,
+  mirrorFactionId,
+} from 'checker-model';
 import { SimplePredictor } from './simple-predictor';
 import { MovePrediction } from './types';
 import { minDistanceFromGoal, stepDistance } from './utils';
@@ -14,6 +24,7 @@ export class MultiStepPredictor extends SimplePredictor {
 
   predict(id: FactionIdentity): MoveStep | null {
     const predictMoveSteps: MovePrediction[] = this.dfsGetMaxScoreStep(id, this.getGameModel(), 0);
+
     if (isEmpty(predictMoveSteps)) {
       return null;
     }
@@ -35,7 +46,15 @@ export class MultiStepPredictor extends SimplePredictor {
         const { from, to } = prediction.step as MoveStep;
         const model = cloneDeep(gameModel);
         model.getBoard().move(from, to);
-        prediction.score += this.getMaxScoreFromPredictions(this.dfsGetMaxScoreStep(id, model, currentDepth + 1));
+
+        const enemyFaction = gameModel.getPlayerByFactionId(mirrorFactionId(id) as FactionIdentity);
+        if (typeof enemyFaction === 'undefined') {
+          prediction.score += this.getMaxScoreFromPredictions(this.dfsGetMaxScoreStep(id, model, currentDepth + 1));
+        } else {
+          prediction.score -= this.getMaxScoreFromPredictions(
+            this.dfsGetMaxScoreStep(mirrorFactionId(id) as FactionIdentity, model, currentDepth + 1),
+          );
+        }
       });
     }
 
