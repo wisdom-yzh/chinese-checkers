@@ -2,8 +2,7 @@ import { isEmpty } from 'lodash-es';
 import { FactionIdentity, MoveStep, IGameModel, IFaction, Coordinate, IPiece } from 'checker-model';
 import { AbstractPredictor } from './abstract-predictor';
 import { MovePrediction } from './types';
-
-const dist = (a: Coordinate, b: Coordinate): number => Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+import { minDistanceFromGoal, stepDistance } from './utils';
 
 export class SimplePredictor extends AbstractPredictor {
   constructor(model: IGameModel) {
@@ -24,13 +23,13 @@ export class SimplePredictor extends AbstractPredictor {
     });
 
     let maxPrediction: MovePrediction = { score: -1000, step: null };
-    maxPrediction = this.getPieceMaxStep(emptyGoals, outer, maxPrediction);
-    maxPrediction = this.getPieceMaxStep([goals[0]], inner, maxPrediction);
+    maxPrediction = this.getOuterPieceMaxStep(faction, emptyGoals, outer, maxPrediction);
+    maxPrediction = this.getInnerPieceMaxStep(goals[0], inner, maxPrediction);
 
     return maxPrediction.step;
   }
 
-  private groupPieceByGoal(faction: IFaction): { inner: IPiece[]; outer: IPiece[] } {
+  protected groupPieceByGoal(faction: IFaction): { inner: IPiece[]; outer: IPiece[] } {
     const inner: IPiece[] = [],
       outer: IPiece[] = [];
 
@@ -45,20 +44,16 @@ export class SimplePredictor extends AbstractPredictor {
     return { inner, outer };
   }
 
-  private getPieceMaxStep(goals: Coordinate[], pieces: IPiece[], initial: MovePrediction): MovePrediction {
+  private getInnerPieceMaxStep(goal: Coordinate, pieces: IPiece[], initial: MovePrediction): MovePrediction {
     const board = this.getBoard();
 
     pieces.forEach(piece => {
       const from = piece.getCoordinate();
       board.getAvailableJumpPosition(from).forEach(to => {
-        const stepDistance = this.stepDistance(goals, from, to);
-        if (initial.step === null || stepDistance > initial.score) {
-          initial.step = {
-            from,
-            to,
-            piece,
-          };
-          initial.score = stepDistance;
+        const stepDist = stepDistance([goal], from, to);
+        if (initial.step === null || stepDist > initial.score) {
+          initial.step = { from, to, piece };
+          initial.score = stepDist;
         }
       });
     });
@@ -66,17 +61,29 @@ export class SimplePredictor extends AbstractPredictor {
     return initial;
   }
 
-  private stepDistance(goals: Coordinate[], from: Coordinate, to: Coordinate): number {
-    return this.minDistanceFromGoal(from, goals) - this.minDistanceFromGoal(to, goals);
-  }
+  private getOuterPieceMaxStep(
+    faction: IFaction,
+    goals: Coordinate[],
+    pieces: IPiece[],
+    initial: MovePrediction,
+  ): MovePrediction {
+    const board = this.getBoard();
 
-  private minDistanceFromGoal(point: Coordinate, goals: Coordinate[]): number {
-    let minDist = 0xff;
+    pieces.forEach(piece => {
+      const from = piece.getCoordinate();
+      board.getAvailableJumpPosition(from).forEach(to => {
+        let stepDist = stepDistance(goals, from, to);
 
-    goals.forEach(goal => {
-      minDist = Math.min(minDist, dist(goal, point));
+        if (faction.isGoalCoordinate(to)) {
+          stepDist += 10 - minDistanceFromGoal(to, [faction.getGoalCoordinates()[0]]);
+        }
+        if (initial.step === null || stepDist > initial.score) {
+          initial.step = { from, to, piece };
+          initial.score = stepDist;
+        }
+      });
     });
 
-    return minDist;
+    return initial;
   }
 }

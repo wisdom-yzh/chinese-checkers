@@ -1,7 +1,7 @@
 import { isEmpty, isEqual } from 'lodash-es';
 import { GameModel, Coordinate, FactionIdentity, IPiece, MoveStep } from 'checker-model';
 import { HTMLCanvas2d, CanvasEventHandler, CheckerView } from 'checker-view';
-import { IPredictor, SimplePredictor } from 'checker-ai';
+import { IPredictor, MultiStepPredictor as Predictor } from 'checker-ai';
 import { CheckerViewGui } from './checker-view-gui';
 
 export class CheckerGameGui {
@@ -9,6 +9,7 @@ export class CheckerGameGui {
   private model?: GameModel;
   private view?: CheckerView<Coordinate, string>;
   private predictor?: IPredictor;
+  private currentPredictor?: IPredictor;
 
   private aiPlayers: FactionIdentity[] = [];
 
@@ -48,7 +49,7 @@ export class CheckerGameGui {
 
     this.aiPlayers = aiPlayers;
     if (!isEmpty(aiPlayers)) {
-      this.predictor = new SimplePredictor(this.model);
+      this.predictor = new Predictor(this.model);
     }
 
     if (!this.model.start()) {
