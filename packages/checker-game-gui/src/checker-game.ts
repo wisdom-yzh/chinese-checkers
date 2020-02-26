@@ -1,7 +1,7 @@
 import { isEmpty, isEqual } from 'lodash-es';
 import { GameModel, Coordinate, FactionIdentity, IPiece, MoveStep } from 'checker-model';
 import { HTMLCanvas2d, CanvasEventHandler, CheckerView } from 'checker-view';
-import { IPredictor, MultiStepPredictor as Predictor } from 'checker-ai';
+import { IPredictor, MinMaxPredictor as Predictor } from 'checker-ai';
 import { CheckerViewGui } from './checker-view-gui';
 
 export class CheckerGameGui {

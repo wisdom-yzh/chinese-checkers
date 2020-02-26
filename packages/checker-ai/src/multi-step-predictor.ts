@@ -1,4 +1,4 @@
-import { cloneDeep, sample, isEmpty, maxBy } from 'lodash-es';
+import { cloneDeep, sample, isEmpty, isUndefined, maxBy } from 'lodash-es';
 import {
   IGameModel,
   FactionIdentity,
@@ -48,7 +48,7 @@ export class MultiStepPredictor extends SimplePredictor {
         model.getBoard().move(from, to);
 
         const enemyFaction = gameModel.getPlayerByFactionId(mirrorFactionId(id) as FactionIdentity);
-        if (typeof enemyFaction === 'undefined') {
+        if (isUndefined(enemyFaction)) {
           prediction.score += this.getMaxScoreFromPredictions(this.dfsGetMaxScoreStep(id, model, currentDepth + 1));
         } else {
           prediction.score -= this.getMaxScoreFromPredictions(
