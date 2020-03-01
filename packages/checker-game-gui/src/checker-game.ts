@@ -9,7 +9,6 @@ export class CheckerGameGui {
   private model?: GameModel;
   private view?: CheckerView<Coordinate, string>;
   private predictor?: IPredictor;
-  private currentPredictor?: IPredictor;
 
   private aiPlayers: FactionIdentity[] = [];
 
@@ -144,7 +143,7 @@ export class CheckerGameGui {
     return this.movePieceAndRender(from, coord);
   }
 
-  private moveByAIPlayer(factionId: FactionIdentity, timeout = 1000): void {
+  private moveByAIPlayer(factionId: FactionIdentity, timeout = 1): void {
     setTimeout(() => {
       const { from, to } = (this.predictor as IPredictor).predict(factionId) as MoveStep;
       this.movePieceAndRender(from, to);

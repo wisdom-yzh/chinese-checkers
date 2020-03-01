@@ -1,5 +1,14 @@
 import { sample, isUndefined } from 'lodash-es';
-import { IGameModel, FactionIdentity, IFaction, MoveStep, IBoard, Player, mirrorFactionId } from 'checker-model';
+import {
+  IGameModel,
+  FactionIdentity,
+  IFaction,
+  MoveStep,
+  IBoard,
+  Player,
+  mirrorFactionId,
+  FACTION_COORDINATES,
+} from 'checker-model';
 import { SimplePredictor } from '../simple-predictor';
 import { stepDistance } from '../utils';
 import { MinMaxTreeNode, createMinMaxTreeRoot, createMinMaxNodeByMovePrediction } from './minmax-tree-node';
@@ -10,7 +19,7 @@ export class MinMaxPredictor extends SimplePredictor {
   private faction?: IFaction;
   private mirrorFaction?: IFaction;
 
-  constructor(model: IGameModel, maxDepth = 4) {
+  constructor(model: IGameModel, maxDepth = 5) {
     super(model);
     this.maxDepth = maxDepth;
   }
@@ -88,7 +97,10 @@ export class MinMaxPredictor extends SimplePredictor {
 
   private createPredictionFromStep(faction: IFaction, step: MoveStep): MovePrediction {
     const { from, to } = step;
-    const score = (faction === this.faction ? 1 : -1) * stepDistance([faction.getGoalCoordinates()[0]], from, to);
+    let score = 0;
+    if (faction === this.faction) {
+      score = faction.checkWin() ? +Infinity : stepDistance([faction.getGoalCoordinates()[0]], from, to);
+    }
     return { step, score };
   }
 }

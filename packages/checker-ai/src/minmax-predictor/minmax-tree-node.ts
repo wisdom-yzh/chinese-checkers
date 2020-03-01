@@ -33,7 +33,7 @@ export const createMinMaxNodeByMovePrediction = (
 
   const node: MinMaxTreeNode = {
     board,
-    boardScore: parent.boardScore + prediction.score,
+    boardScore: prediction.score === +Infinity ? +Infinity : parent.boardScore + prediction.score,
     minOrMax: parent.minOrMax === 'max' ? 'min' : 'max',
     alpha: parent.alpha,
     beta: parent.beta,

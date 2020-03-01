@@ -1,4 +1,5 @@
 export * from './types';
+export * from './utils';
 export * from './abstract-predictor';
 export * from './simple-predictor';
 export * from './multi-step-predictor';
