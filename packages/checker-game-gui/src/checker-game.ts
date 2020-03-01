@@ -112,9 +112,12 @@ export class CheckerGameGui {
     const currentPlayer = model.getCurrentPlayer();
     const factionId = currentPlayer.faction.getId();
     if (this.aiPlayers.indexOf(factionId) !== -1) {
+      document.title = `${factionId}: I'm thinking...`;
       this.moveByAIPlayer(factionId);
+      return true;
     }
 
+    document.title = "It's your turn";
     return true;
   }
 
