@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'lodash';
 import { IFaction, FactionIdentity } from './types';
 import { IPiece, Coordinate, Piece } from '../board';
 import { FACTION_COORDINATES } from '../constants';

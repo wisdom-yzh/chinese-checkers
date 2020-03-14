@@ -10,7 +10,7 @@ export class HTMLCanvas2d extends AbstractCanvas<Coordinate> {
   private deviceContext: CanvasRenderingContext2D;
   private canvas: HTMLCanvasElement;
   private onClickHandler = (ev: MouseEvent): void => {
-    this.emit('click', this.untransform({ x: ev.x, y: ev.y }));
+    this.emit('click', this.untransform({ x: ev.offsetX, y: ev.offsetY }));
   };
 
   constructor(

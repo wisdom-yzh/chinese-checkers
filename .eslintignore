@@ -1,4 +1,7 @@
 packages/**/lib
 packages/**/dist
+packages/**/node
+packages/**/public
+packages/**/build
 **/webpack.config.js
 **/node_modules

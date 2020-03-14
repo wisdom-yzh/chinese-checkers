@@ -1,0 +1,30 @@
+{
+  "name": "checker-transfer-contract",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "wisdom <wisdom.yinzh@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "node/index.js",
+  "browser": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "http://registry.npm.release.ctripcorp.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "code@powerpigger.cc:~/chinese-checker"
+  },
+  "scripts": {
+    "build": "tsc && tsc --build tsconfig.server.json"
+  },
+  "dependencies": {
+    "checker-model": "^0.0.0"
+  }
+}

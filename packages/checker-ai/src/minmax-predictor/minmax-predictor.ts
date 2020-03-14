@@ -1,14 +1,5 @@
-import { sample, isUndefined } from 'lodash-es';
-import {
-  IGameModel,
-  FactionIdentity,
-  IFaction,
-  MoveStep,
-  IBoard,
-  Player,
-  mirrorFactionId,
-  FACTION_COORDINATES,
-} from 'checker-model';
+import { sample, isUndefined, isNull } from 'lodash-es';
+import { IGameModel, FactionIdentity, IFaction, MoveStep, IBoard, Player, mirrorFactionId } from 'checker-model';
 import { SimplePredictor } from '../simple-predictor';
 import { stepDistance } from '../utils';
 import { MinMaxTreeNode, createMinMaxTreeRoot, createMinMaxNodeByMovePrediction } from './minmax-tree-node';
@@ -53,8 +44,11 @@ export class MinMaxPredictor extends SimplePredictor {
 
     for (const step of steps) {
       const prediction = this.createPredictionFromStep(faction, step);
-      const child = createMinMaxNodeByMovePrediction(root, prediction);
+      if (isNull(prediction)) {
+        continue;
+      }
 
+      const child = createMinMaxNodeByMovePrediction(root, prediction);
       this.dfsPredict(depth + 1, child);
       this.updateMinOrMaxScore(root, child, step);
 
@@ -95,11 +89,17 @@ export class MinMaxPredictor extends SimplePredictor {
     return (depth % 2 === 0 ? this.faction : this.mirrorFaction) as IFaction;
   }
 
-  private createPredictionFromStep(faction: IFaction, step: MoveStep): MovePrediction {
+  private createPredictionFromStep(faction: IFaction, step: MoveStep): MovePrediction | null {
     const { from, to } = step;
+    const stepDist = stepDistance([faction.getGoalCoordinates()[0]], from, to);
+
+    if (stepDist < -1) {
+      return null;
+    }
+
     let score = 0;
     if (faction === this.faction) {
-      score = faction.checkWin() ? +Infinity : stepDistance([faction.getGoalCoordinates()[0]], from, to);
+      score = faction.checkWin() ? +Infinity : stepDist;
     }
     return { step, score };
   }

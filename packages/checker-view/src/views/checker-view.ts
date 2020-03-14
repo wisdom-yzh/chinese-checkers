@@ -43,6 +43,11 @@ export abstract class CheckerView<TCoordinate, TColor> extends AbstractView<IBoa
   setFocusStatus(coord: Coordinate, status: FocusStatus): boolean {
     const elements = this.getChildren() as SlotElement<TCoordinate, TColor>[];
     const element = elements[f(coord)];
+
+    if (!element) {
+      return false;
+    }
+
     const props = element.getProps();
 
     if (

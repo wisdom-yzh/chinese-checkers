@@ -1,0 +1,25 @@
+@import '../../styles/variables.scss';
+
+.step-list {
+  position: absolute;
+  overflow: hidden;
+  left: 550px;
+  top: 20px;
+  right: 0px;
+  bottom: 100px;
+  border: $buttonBorder;
+  text-align: center;
+  padding: 15px;
+  color: $textColor;
+
+  &-title {
+    font-size: $subTitleFontSize;
+    margin-bottom: 15px;
+  }
+
+  &-content {
+    text-align: left;
+    height: 600px;
+    overflow: hidden;
+  }
+}

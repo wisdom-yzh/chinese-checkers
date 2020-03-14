@@ -2,6 +2,7 @@
 
 # compiled output
 packages/**/lib
+packages/**/node
 dist
 tmp
 out-tsc
