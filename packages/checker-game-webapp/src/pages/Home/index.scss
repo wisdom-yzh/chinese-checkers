@@ -16,5 +16,9 @@
     margin: 60px auto;
     width: 50%;
     padding: 15px;
+    &:hover {
+      background-color: $textColor;
+      color: $backgroundColor;
+    }
   }
 }

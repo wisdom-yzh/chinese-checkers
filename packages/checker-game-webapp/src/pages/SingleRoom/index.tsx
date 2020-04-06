@@ -1,19 +1,23 @@
 import React, { FC, useCallback } from 'react';
 import Room from '../../components/Room';
-import { Slot, useGlobalContext } from '../../hooks';
+import { Slot, useGlobalContext, useSlots } from '../../hooks';
 import { useHistory } from 'react-router-dom';
 
 const SingleRoom: FC = () => {
   const history = useHistory();
-  const globalContext = useGlobalContext();
+  const { setSlots, setGameMode } = useGlobalContext();
+  const { slots, setSlot } = useSlots();
 
-  const startGame = useCallback((slots: Slot[]) => {
-    globalContext.setGameMode('single');
-    globalContext.setSlots(slots);
-    history.replace('/game');
-  }, []);
+  const startGame = useCallback(
+    (slots: Slot[]) => {
+      setGameMode('single');
+      setSlots(slots);
+      history.replace('/game');
+    },
+    [history, slots],
+  );
 
-  return <Room middleButtonText="开始" onMiddleButtonClick={startGame} />;
+  return <Room middleButtonText="开始" onMiddleButtonClick={startGame} slots={slots} setSlot={setSlot} />;
 };
 
 export default SingleRoom;

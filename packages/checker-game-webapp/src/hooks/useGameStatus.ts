@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { FactionIdentity, MoveStep, Coordinate, GameStatus } from 'checker-model';
+import { useInvoke } from './useInvoke';
+import { MoveChessBean, MOVE_CHESS } from 'checker-transfer-contract';
+import { useGlobalContext } from './useGlobalContext';
 
 export type ChessEvents = {
   onClick(coord: Coordinate): void;
@@ -17,6 +20,8 @@ export interface IGameStatus {
 
 // eslint-disable-next-line
 export const useGameStatus = (): IGameStatus & ChessEvents => {
+  const { gameMode, networkRoomParam } = useGlobalContext();
+  const invoke = useInvoke();
   const [status, setStatus] = useState<GameStatus>('preparing');
   const [mention, setMention] = useState<string>('Ready');
   const [actions, setActions] = useState<MoveStep[]>([]);
@@ -45,6 +50,10 @@ export const useGameStatus = (): IGameStatus & ChessEvents => {
     const { from, to } = moveStep;
     const mention = `Player ${faction}: (${from.x}, ${from.y}) -> (${to.x}, ${to.y})`;
 
+    if (gameMode === 'network' && networkRoomParam && networkRoomParam.myFaction === faction) {
+      const { from, to } = moveStep;
+      invoke<MoveChessBean, {}>(MOVE_CHESS, { from, to });
+    }
     setMention(mention);
     setActions(steps);
   };

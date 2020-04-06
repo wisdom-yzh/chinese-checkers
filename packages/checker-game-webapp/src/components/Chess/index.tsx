@@ -1,6 +1,5 @@
 import React, { FC, useRef, useEffect } from 'react';
-import { SingleChessGame } from './SingleChessGame';
-import { ChessProps } from './interface';
+import { ChessProps, SingleChessGame, NetChessGame } from './interface';
 
 import './index.scss';
 
@@ -14,6 +13,8 @@ const Chess: FC<ChessProps> = props => {
     }
     if (mode === 'single') {
       new SingleChessGame(chessRef.current, props).start();
+    } else {
+      new NetChessGame(chessRef.current, props).start();
     }
   }, [chessRef]);
 

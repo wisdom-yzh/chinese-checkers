@@ -1,0 +1,9 @@
+@import '../../styles/variables.scss';
+
+.netroom-container {
+  padding: 5px;
+  height: 700px;
+  width: 100%;
+  overflow: auto;
+  border: $buttonBorder;
+}

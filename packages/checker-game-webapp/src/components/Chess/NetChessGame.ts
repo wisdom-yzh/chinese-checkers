@@ -1,11 +1,10 @@
 import { FactionIdentity, MoveStep, Coordinate } from 'checker-model';
-import { SinglePlayerCheckerGameGui, ICheckerGameGuiProps, AIPlayer } from 'checker-game-gui';
+import { MultiPlayersCheckerGameGui, ICheckerGameGuiProps } from 'checker-game-gui';
 import { ChessProps } from './interface';
 import { ChessEvents } from '../../hooks';
 
 const convert = (canvas: HTMLCanvasElement, chessProps: ChessProps): ICheckerGameGuiProps => {
   const players: FactionIdentity[] = [];
-  const aiPlayers: AIPlayer[] = [];
   let myFactionId: FactionIdentity = 0;
 
   chessProps.slots.forEach((slot, index) => {
@@ -15,31 +14,25 @@ const convert = (canvas: HTMLCanvasElement, chessProps: ChessProps): ICheckerGam
     }
     if (slotType === 'myself') {
       myFactionId = index as FactionIdentity;
-    } else {
-      // ai
-      aiPlayers.push({
-        factionId: index as FactionIdentity,
-        difficulty: slot.aiLevel || 'simple',
-      });
     }
     players.push(index as FactionIdentity);
   });
 
   const props: ICheckerGameGuiProps = {
+    aiPlayers: [],
     canvasElement: canvas,
-    players,
-    aiPlayers,
     myFactionId,
+    players,
   };
 
   return props;
 };
 
-export class SingleChessGame extends SinglePlayerCheckerGameGui {
+export class NetChessGame extends MultiPlayersCheckerGameGui {
   private events: ChessEvents;
 
   constructor(canvas: HTMLCanvasElement, props: ChessProps) {
-    super(convert(canvas, props));
+    super(convert(canvas, props), props.socket as SocketIOClient.Socket);
     this.events = {
       onChessMove: props.onChessMove,
       onClick: props.onClick,

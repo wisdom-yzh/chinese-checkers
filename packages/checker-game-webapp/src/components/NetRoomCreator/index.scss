@@ -1,0 +1,36 @@
+@import '../../styles/variables.scss';
+
+@mixin children-block {
+  height: 100%;
+  font-size: $subTitleFontSize;
+  margin-left: 10px;
+  color: $textColor;
+}
+
+.netroom-create {
+  width: 100%;
+  height: 60px;
+  padding: 5px 0;
+  display: inline-flex;
+  justify-content: flex-end;
+  font-size: $subTitleFontSize;
+
+  label {
+    @include children-block;
+  }
+  input {
+    @include children-block;
+  }
+
+  &-btn {
+    @include children-block;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    cursor: pointer;
+    &:hover {
+      background-color: $buttonTextColor;
+      color: white;
+    }
+  }
+}

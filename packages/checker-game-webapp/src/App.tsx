@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Home, SingleRoom, Game } from './pages';
+import { ToastContainer } from 'react-toastify';
+import { Home, SingleRoom, Game, NetConnection, NetRoomList, NetRoom } from './pages';
 import { GlobalContextProvider } from './hooks';
 
 import './styles/index.scss';
@@ -14,6 +15,15 @@ const App: FC = () => {
             <Route path="/single/room">
               <SingleRoom />
             </Route>
+            <Route path="/network/connect">
+              <NetConnection />
+            </Route>
+            <Route path="/network/rooms">
+              <NetRoomList />
+            </Route>
+            <Route path="/network/room/:id">
+              <NetRoom />
+            </Route>
             <Route path="/game">
               <Game />
             </Route>
@@ -23,6 +33,7 @@ const App: FC = () => {
           </Switch>
         </Router>
       </GlobalContextProvider>
+      <ToastContainer />
     </div>
   );
 };

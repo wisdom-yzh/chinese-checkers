@@ -14,6 +14,9 @@ module.exports =  {
     'max-depth': ['error', 3],
     'max-lines-per-function': ['error', 50],
     'max-nested-callbacks': ['error', 3],
-    '@typescript-eslint/interface-name-prefix': ['error', {'prefixWithI': 'always'}]
+    '@typescript-eslint/interface-name-prefix': ['error', {'prefixWithI': 'always'}],
+    '@typescript-eslint/explicit-function-return-type': ['error', {
+      'allowTypedFunctionExpressions': true
+    }]
   }
 };

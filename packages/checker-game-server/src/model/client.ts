@@ -1,41 +1,21 @@
-import { EventEmitter } from 'events';
 import { isUndefined } from 'util';
 import { Socket } from 'socket.io';
 import { FactionIdentity } from 'checker-model';
-import {
-  ICreateRoomMessage,
-  IJoinRoomMessage,
-  IListRoomsMessage,
-  IRoomDetailMessage,
-  ClientStatus,
-  IGameStatusMessage,
-} from 'checker-transfer-contract';
-import { IClient, IRoom } from '../interface';
-import { Room } from './room';
+import { ClientStatus, SYNC_CLIENT, SyncClient, SYNC_SERVER_ROOMS, RoomsMessage } from 'checker-transfer-contract';
+import { Room, Rooms } from './room';
 
-export class Client extends EventEmitter implements IClient {
+export class Client {
   private id: string;
   private socket: Socket;
-  private room?: IRoom;
+  private room?: Room;
   private factionIdentity?: FactionIdentity;
   private status: ClientStatus;
 
   constructor(socket: Socket) {
-    super();
     this.socket = socket;
     this.id = this.socket.id;
     this.status = ClientStatus.Free;
-    this.init();
-  }
-
-  private init(): void {
-    this.socket.on('create', () => this.onCreateRoom);
-    this.socket.on('join', () => this.onJoinRoom);
-    this.socket.on('start', () => this.onStartGame);
-    this.socket.on('prepare', () => this.onPrepareGame);
-    this.socket.on('disconnect', () => this.emit('disconnect', this.id));
-
-    process.nextTick(() => this.emit('connect', this));
+    this.syncClientMessage();
   }
 
   isMaster(): boolean {
@@ -50,16 +30,21 @@ export class Client extends EventEmitter implements IClient {
     return this.status;
   }
 
+  setStatus(status: ClientStatus): void {
+    this.status = status;
+  }
+
   getId(): string {
     return this.id;
   }
 
-  getRoom(): IRoom | undefined {
+  getRoom(): Room | undefined {
     return this.room;
   }
 
-  setRoom(room?: IRoom): void {
+  setRoom(room?: Room, factionIdentity?: FactionIdentity): void {
     this.room = room;
+    this.factionIdentity = factionIdentity;
     this.status = ClientStatus.Free;
   }
 
@@ -67,45 +52,80 @@ export class Client extends EventEmitter implements IClient {
     return this.factionIdentity;
   }
 
-  sendListRoomsMessage(rooms: IListRoomsMessage): void {
-    this.socket.emit('rooms', rooms);
+  setMyFactionIdentity(identity: FactionIdentity | undefined): void {
+    this.factionIdentity = identity;
   }
 
-  sendRoomDetailMessage(detail: IRoomDetailMessage): void {
-    this.socket.emit('detail', detail);
-  }
-
-  sendGameStatusMessage(game: IGameStatusMessage): void {
-    this.socket.emit('game', game);
-  }
-
-  private onCreateRoom = (req: ICreateRoomMessage): void => {
-    const room = new Room(req.name, this, req.myFaction, req.factions);
-    this.factionIdentity = req.myFaction;
-    this.emit('create', this.id, room);
-  };
-
-  private onJoinRoom = (req: IJoinRoomMessage): void => {
-    if (this.room) {
-      return;
+  prepare(): boolean {
+    if (this.status === ClientStatus.Free) {
+      this.status = ClientStatus.Preparing;
+      return true;
     }
-    this.factionIdentity = req.myFaction;
-    this.emit('join', req.id, req.myFaction);
-  };
+    return false;
+  }
 
-  private onLeaveRoom = (): void => {
-    this.emit('leave', this.id, this.room);
-  };
+  syncClientMessage(): void {
+    this.socket.emit(SYNC_CLIENT, { id: this.socket.id } as SyncClient);
+  }
 
-  private onPrepareGame = (): void => {
-    this.status = ClientStatus.Preparing;
-  };
+  sendMessage<T>(msg: string, data: T): void {
+    this.socket.emit(msg, data);
+  }
+}
 
-  private onStartGame = (): void => {
-    if (!this.isMaster()) {
-      return;
+export class Clients {
+  private static clients: Record<string, Client> = {};
+
+  static addClient(socket: Socket): Client {
+    const id = socket.id;
+
+    if (this.clients[id]) {
+      return this.clients[id];
     }
 
-    (this.room as IRoom).start();
-  };
+    this.clients[id] = new Client(socket);
+    socket.on('disconnect', () => this.removeClient(socket.id));
+    return this.clients[id];
+  }
+
+  static removeClient(id: string): boolean {
+    if (!this.clients[id]) {
+      return false;
+    }
+
+    const client = this.clients[id];
+    const room = client.getRoom();
+    if (room) {
+      const faction = client.getMyFactionIdentity() as FactionIdentity;
+      room.removeClient(faction);
+      const otherClients = Object.values(room.getClients());
+      if (otherClients.length) {
+        room.boardcastRoomDetails();
+      } else {
+        Rooms.removeRoom(room.getId());
+      }
+
+      this.broadcastRooms();
+    }
+
+    delete this.clients[id];
+    return true;
+  }
+
+  static getClient(id: string): Client | undefined {
+    return this.clients[id];
+  }
+
+  static getAllClients(): Client[] {
+    return Object.values(this.clients);
+  }
+
+  static broadcast<T>(msg: string, data: T): void {
+    this.getAllClients().forEach(client => client.sendMessage<T>(msg, data));
+  }
+
+  static broadcastRooms(): void {
+    const rooms = Rooms.getRoomsMessage();
+    this.broadcast<RoomsMessage>(SYNC_SERVER_ROOMS, rooms);
+  }
 }

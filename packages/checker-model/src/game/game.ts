@@ -77,6 +77,7 @@ export class GameModel implements IGameModel {
     this.updatePlayerStatus();
 
     if (this.allPlayersEnding()) {
+      this.status = 'end';
       return 'end';
     }
 
@@ -104,6 +105,10 @@ export class GameModel implements IGameModel {
     return this.players.find(player => player.faction.getId() === id);
   }
 
+  private allPlayersEnding(): boolean {
+    return this.players.find(player => player.status === 'playing') === undefined;
+  }
+
   private cyclePlayer(): void {
     let nextPlayer: number = this.currentPlayerIndex;
 
@@ -112,10 +117,6 @@ export class GameModel implements IGameModel {
     } while (this.players[nextPlayer].status === 'win');
 
     this.currentPlayerIndex = nextPlayer;
-  }
-
-  private allPlayersEnding(): boolean {
-    return this.players.find(player => player.status === 'playing') === undefined;
   }
 
   private updatePlayerStatus(player?: Player): void {

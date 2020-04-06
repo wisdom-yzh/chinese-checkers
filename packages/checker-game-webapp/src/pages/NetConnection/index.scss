@@ -1,0 +1,28 @@
+@import '../../styles/variables.scss';
+
+.net-connection {
+  text-align: center;
+  padding: 200px 50px;
+  &-input {
+    color: $textColor;
+    font-size: $titleFontSize;
+    input {
+      font-size: $titleFontSize;
+    }
+  }
+
+  &-button {
+    font-size: $titleFontSize;
+    color: $textColor;
+    border: $buttonBorder;
+    margin: 180px auto;
+    width: 200px;
+    line-height: 80px;
+    height: 80px;
+    cursor: pointer;
+    &:hover {
+      background-color: $textColor;
+      color: $backgroundColor;
+    }
+  }
+}

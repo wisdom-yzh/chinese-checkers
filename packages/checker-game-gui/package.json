@@ -28,9 +28,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/socket.io-client": "^1.4.32",
     "checker-ai": "^0.0.0",
     "checker-model": "^0.0.0",
+    "checker-transfer-contract": "^0.0.0",
     "checker-view": "^0.0.0",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0"
   }
 }

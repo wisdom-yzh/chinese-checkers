@@ -1,0 +1,52 @@
+@import '../../styles/variables.scss';
+
+@mixin faction-block {
+  width: 90px;
+  margin: 0 5px;
+  border: $buttonBorder;
+  font-size: $titleFontSize;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.net-room-preview {
+  padding: 5px 5px;
+  display: flex;
+  height: 100px;
+
+  &-name {
+    flex: 1;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: $subTitleFontSize;
+    color: $textColor;
+    &-title {
+      flex: 1;
+    }
+    &-content {
+      flex: 2;
+    }
+  }
+
+  &-factions {
+    flex: 3;
+    display: inline-flex;
+    &-free {
+      @include faction-block;
+      cursor: pointer;
+      background-color: $backgroundColor;
+      color: $textColor;
+      &:hover {
+        background-color: $buttonTextColor;
+        color: white;
+      }
+    }
+    &-filled {
+      @include faction-block;
+      background-color: $blockBackgroundColor;
+      color: white;
+    }
+  }
+}

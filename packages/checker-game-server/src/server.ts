@@ -1,20 +1,33 @@
 import * as http from 'http';
-import socketio, { Socket, ServerOptions } from 'socket.io';
-import { FactionIdentity } from 'checker-model';
-import { IClient, IRoom } from './interface';
-import { Client } from './model';
+import express from 'express';
+import cors from 'cors';
+import socketio, { Socket } from 'socket.io';
+import { SOCKET_PATH } from 'checker-transfer-contract';
+import { auth, error } from './middleware';
+import { game, room } from './controller';
+import { Clients, Client, Room } from './model';
 
 export class Server {
+  private app: express.Application;
   private server: http.Server;
   private io: socketio.Server;
 
-  private clients: Record<string, IClient> = {};
-  private rooms: Record<string, IRoom> = {};
+  private clients: Record<string, Client> = {};
+  private rooms: Record<string, Room> = {};
 
-  constructor(options?: ServerOptions) {
-    this.server = http.createServer();
-    this.io = socketio.listen(this.server, options || { origins: '*:*', path: '/sync' });
-    this.io.on('connection', (socket: Socket) => this.createNewClient(socket));
+  constructor() {
+    // init http server
+    this.app = express();
+    this.middlewares.forEach(middleware => this.app.use(middleware));
+    this.server = http.createServer(this.app);
+
+    // init websocket server
+    this.io = socketio.listen(this.server, { origins: '*:*', path: SOCKET_PATH });
+    this.io.on('connection', (socket: Socket) => Clients.addClient(socket));
+  }
+
+  private get middlewares(): express.NextFunction[] {
+    return [cors(), express.json(), auth, room, game, error];
   }
 
   start(port?: number): void {
@@ -22,55 +35,4 @@ export class Server {
     this.server.listen(PORT);
     console.log(`listen to ${PORT}`);
   }
-
-  private createNewClient(socket: Socket): void {
-    const client = new Client(socket);
-    client.on('connect', this.onClientConnect);
-    client.on('disconnect', this.onClientDisconnect);
-    client.on('create', this.onCreateRoom);
-    client.on('join', this.onJoinRoom);
-    client.on('leave', this.onLeaveRoom);
-  }
-
-  private onClientConnect = (client: IClient): void => {
-    this.clients[client.getId()] = client;
-  };
-
-  private onClientDisconnect = (clientId: string): void => {
-    delete this.clients[clientId];
-  };
-
-  private onCreateRoom = (clientId: string, room: IRoom): void => {
-    const client = this.clients[clientId];
-    const roomId = room.getId();
-
-    this.rooms[roomId] = room;
-    client.setRoom(room);
-  };
-
-  private onJoinRoom = (clientId: string, roomId: string, faction: FactionIdentity): void => {
-    const room = this.rooms[roomId];
-    const client = this.clients[clientId];
-
-    if (!room.addClient(faction, client)) {
-      return;
-    }
-    client.setRoom(room);
-  };
-
-  private onLeaveRoom = (clientId: string, roomId: string): void => {
-    const room = this.rooms[roomId];
-    const client = this.clients[clientId];
-    const factionIdentity = client.getMyFactionIdentity() as FactionIdentity;
-
-    if (!room.removeClient(factionIdentity)) {
-      return;
-    }
-
-    client.setRoom(undefined);
-
-    if (Object.keys(room.getClients()).length === 0) {
-      delete this.rooms[room.getId()];
-    }
-  };
 }
