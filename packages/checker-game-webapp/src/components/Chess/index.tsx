@@ -2,9 +2,10 @@ import React, { FC, useRef, useEffect } from 'react';
 import { ChessProps, SingleChessGame, NetChessGame } from './interface';
 
 import './index.scss';
+import { Redirect } from 'react-router-dom';
 
 const Chess: FC<ChessProps> = props => {
-  const { mode } = props || {};
+  const { mode, slots } = props || {};
   const chessRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -16,9 +17,9 @@ const Chess: FC<ChessProps> = props => {
     } else {
       new NetChessGame(chessRef.current, props).start();
     }
-  }, [chessRef]);
+  }, [chessRef, mode]);
 
-  return <canvas ref={chessRef} className="chess" width={600} height={600} />;
+  return slots.length ? <canvas ref={chessRef} className="chess" width={600} height={600} /> : <Redirect to="/" />;
 };
 
 export default Chess;

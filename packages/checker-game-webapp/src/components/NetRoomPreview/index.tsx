@@ -13,11 +13,14 @@ const NetRoomPreview: SFC<NetRoomPreviewProps> = props => {
   const factions: FactionIdentity[] = [0, 1, 2, 3, 4, 5];
   const { onClickFreeSlot, roomInfo } = props || {};
 
-  const onClickSlot = useCallback((factionId: FactionIdentity) => {
-    if (roomInfo.freeFactions.includes(factionId)) {
-      onClickFreeSlot(roomInfo.id, factionId);
-    }
-  }, []);
+  const onClickSlot = useCallback(
+    (factionId: FactionIdentity) => {
+      if (roomInfo.freeFactions.includes(factionId)) {
+        onClickFreeSlot(roomInfo.id, factionId);
+      }
+    },
+    [onClickFreeSlot, roomInfo.id, roomInfo.freeFactions],
+  );
 
   return (
     <div className="net-room-preview">

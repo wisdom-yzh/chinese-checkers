@@ -26,7 +26,7 @@ export const useNetRooms = (): RoomPreview[] => {
         return;
       };
     });
-  }, [networkParam]);
+  }, [networkParam, invoke]);
 
   return rooms;
 };

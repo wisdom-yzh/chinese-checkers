@@ -22,7 +22,7 @@ const NetRoomCreator: FC<NetRoomCreatorProps> = props => {
       return;
     }
     onCreateRoom(inputName);
-  }, [inputName]);
+  }, [inputName, onCreateRoom]);
 
   return (
     <div className="netroom-create">

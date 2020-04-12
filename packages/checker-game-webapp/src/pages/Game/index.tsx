@@ -22,7 +22,7 @@ const Game: FC = () => {
         onClose: () => history.replace(backUrl),
       });
     }
-  }, [status, slots, gameMode]);
+  }, [status, slots, gameMode, history]);
 
   return (
     <>

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 import { FactionIdentity } from 'checker-model';
 import {
   CreateRoomBean,
@@ -32,7 +32,7 @@ const useRedirect = (networkParam: NetworkParamType | null, networkRoomParam: Ne
     } else if (networkRoomParam) {
       history.replace(`/network/room/${networkRoomParam.roomId}`);
     }
-  }, [networkParam, networkRoomParam]);
+  }, [networkParam, networkRoomParam, history]);
 };
 
 // eslint-disable-next-line
@@ -44,19 +44,22 @@ const NetRoomList: FC = () => {
 
   useRedirect(networkParam, networkRoomParam);
 
-  const createRoom = useCallback((name: string): void => {
-    invoke<CreateRoomBean, CreateRoomId>(CREATE_ROOM, {
-      factions: [0, 1, 2, 3, 4, 5],
-      myFaction: 3,
-      name,
-    }).then(res => {
-      setNetworkRoomParam({
-        iAmMaster: true,
+  const createRoom = useCallback(
+    (name: string): void => {
+      invoke<CreateRoomBean, CreateRoomId>(CREATE_ROOM, {
+        factions: [0, 1, 2, 3, 4, 5],
         myFaction: 3,
-        roomId: res.roomId,
-      } as NetworkRoomParamType);
-    });
-  }, []);
+        name,
+      }).then(res => {
+        setNetworkRoomParam({
+          iAmMaster: true,
+          myFaction: 3,
+          roomId: res.roomId,
+        } as NetworkRoomParamType);
+      });
+    },
+    [invoke, setNetworkRoomParam],
+  );
 
   const joinRoom = useCallback(
     (roomId: string, myFaction: FactionIdentity): void => {
@@ -71,10 +74,14 @@ const NetRoomList: FC = () => {
         } as NetworkRoomParamType);
       });
     },
-    [invoke],
+    [invoke, setNetworkRoomParam],
   );
 
-  return (
+  return !networkParam ? (
+    <Redirect to="/network/connect" />
+  ) : networkRoomParam ? (
+    <Redirect to={`/network/room/${networkRoomParam.roomId}`} />
+  ) : (
     <>
       <div className="netroom-container">
         {netRooms.map((room, index) => (

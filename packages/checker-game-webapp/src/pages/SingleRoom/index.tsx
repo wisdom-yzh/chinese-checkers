@@ -14,7 +14,7 @@ const SingleRoom: FC = () => {
       setSlots(slots);
       history.replace('/game');
     },
-    [history, slots],
+    [history, setGameMode, setSlots],
   );
 
   return <Room middleButtonText="开始" onMiddleButtonClick={startGame} slots={slots} setSlot={setSlot} />;

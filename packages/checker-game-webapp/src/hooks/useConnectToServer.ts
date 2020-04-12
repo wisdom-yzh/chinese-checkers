@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useCallback } from 'react';
+import { useCallback } from 'react';
 import io from 'socket.io-client';
 import { SOCKET_PATH, SYNC_CLIENT, SyncClient } from 'checker-transfer-contract';
 import { useGlobalContext } from '../hooks';
@@ -53,7 +53,7 @@ export const useConnectToServer = (): IConnection => {
     }
     networkParam.socket.disconnect();
     setNetworkParam(null);
-  }, [globalContext.networkParam]);
+  }, [globalContext]);
 
   return { connect, disconnect };
 };

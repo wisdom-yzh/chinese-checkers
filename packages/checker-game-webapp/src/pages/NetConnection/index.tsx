@@ -1,13 +1,12 @@
-import React, { FC, useState, ChangeEvent, useEffect, useCallback } from 'react';
+import React, { FC, useState, ChangeEvent, useCallback } from 'react';
 import { toast } from 'react-toastify';
-import { useHistory } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { useGlobalContext, useConnectToServer } from '../../hooks';
 
 import './index.scss';
 
 // eslint-disable-next-line
 const NetConnection: FC = () => {
-  const history = useHistory();
   const globalContext = useGlobalContext();
   const [inputServer, setInputServer] = useState<string>('');
   const [buttonText, setButtonText] = useState<string>('Connect');
@@ -28,19 +27,13 @@ const NetConnection: FC = () => {
           hideProgressBar: true,
           position: 'top-center',
         });
-      })
-      .then(() => {
         setButtonText('Connect');
       });
-  }, [inputServer]);
+  }, [inputServer, connect]);
 
-  useEffect(() => {
-    if (globalContext.networkParam) {
-      history.replace('/network/rooms');
-    }
-  }, [globalContext.networkParam]);
-
-  return (
+  return globalContext.networkParam ? (
+    <Redirect to="/network/rooms" />
+  ) : (
     <div className="net-connection">
       <label className="net-connection-input">
         连接服务器 http://

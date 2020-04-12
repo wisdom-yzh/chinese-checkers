@@ -31,7 +31,7 @@ export const useNetRoomDetail = (): RoomDetailMessage | null => {
       .catch(() => {
         setNetworkRoomParam(null);
       });
-  }, [networkRoomParam && networkRoomParam.roomId]);
+  }, [networkRoomParam, invoke, setNetworkRoomParam, networkParam]);
 
   useEffect(() => {
     const { myFaction, iAmMaster } = networkRoomParam || {};
@@ -43,7 +43,7 @@ export const useNetRoomDetail = (): RoomDetailMessage | null => {
         } as NetworkRoomParamType);
       }
     }
-  }, [detail]);
+  }, [detail, networkRoomParam, setNetworkRoomParam]);
 
   return detail;
 };

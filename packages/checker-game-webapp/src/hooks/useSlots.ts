@@ -80,5 +80,5 @@ export const useNetSlots = (roomDetail: RoomDetailMessage | null): Slot[] => {
 
     setSlots(slots);
     return slots;
-  }, [roomDetail]);
+  }, [roomDetail, networkRoomParam, setSlots]);
 };
