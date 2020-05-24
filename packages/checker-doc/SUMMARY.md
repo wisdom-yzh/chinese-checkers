@@ -1,0 +1,15 @@
+# Summary
+
+* [简介](README.md)
+* [数据层](model/index.md)
+    * [游戏与玩家](model/game.md)
+    * [棋盘、阵营与棋子](model/board.md)
+* [ai层](ai/index.md)
+    * [分数估值与基本算法](ai/score.md)
+    * [Alpha-Beta剪枝](ai/alpha-beta.md)
+* [视图层](view/index.md)
+    * [绘图元素](view/canvas.md)
+    * [坐标转换](view/transform.md)
+* [应用层](webapp/index.md)
+    * [客户端](webapp/client.md)
+    * [多人游戏服务端](webapp/server.md)

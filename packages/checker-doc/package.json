@@ -1,0 +1,19 @@
+{
+  "name": "checker-doc",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "wisdom <wisdom.yinzh@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "code@powerpigger.cc:~/chinese-checker"
+  },
+  "scripts": {
+    "start": "gitbook serve",
+    "build": "gitbook build"
+  },
+  "dependencies": {
+    "gitbook-cli": "^2.3.2"
+  }
+}

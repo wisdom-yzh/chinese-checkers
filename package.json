@@ -9,7 +9,8 @@
     "debug:test": "node --inspect-brk ./node_modules/.bin/jest --runInBand",
     "server": "lerna run start --scope=checker-game-server --stream",
     "debug:server": "lerna run debug --scope=checker-game-server --stream",
-    "lint": "eslint . --cache --fix"
+    "lint": "eslint . --cache --fix",
+    "doc": "lerna run start --scope=checker-doc --stream"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
