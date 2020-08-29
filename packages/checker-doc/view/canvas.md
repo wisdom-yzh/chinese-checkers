@@ -116,6 +116,62 @@ export interface ITransformable<TCoordinate> extends ITransform<TCoordinate> {
 
 绘制跳棋棋盘的画布对象需要同时实现ICanvas和ITransformable接口。
 
-转换方法示例
+##### 转换方法实现
+
+以目前基于HTML Canvas 2D实现的棋盘画布为例，需要对坐标进行平移、缩放和旋转的转换：
+
+![](../assets/transform.jpg)
+
+以坐标轴旋转为例，我们需要将直角坐标转换为斜坐标，转换公式如下:
+
+transform正向转换:
+
+$$
+\left\{ \begin{matrix}
+x'=&x-y\sin(\theta) \\
+y'=&y\cos(\theta)
+\end{matrix} \right.
+$$
+
+untransform反向转换:
+
+$$
+\left\{ \begin{matrix}
+x=&x'+y'\tan(\theta) \\
+y=&\frac{y'}{\cos(\theta)}
+\end{matrix} \right.
+$$
+
 
 ## 绘图方法
+
+ICanvas类下定义并实现了三种绘图方法，分别为
+
+* 绘制像素点
+* 绘制直线
+* 绘制圆
+
+理论上,只需要实现第一个绘制像素点方法,就可以通过简单的图形学计算来实现画线和画圆。
+
+如可以根据直线方程$ax+by+c=0$来绘制直线;
+
+同理可以通过圆的方程$$(x-a)^2+(y-b)^2=r^2$$绘制圆,并且根据$$(x-a)^2+(y-b)^2 \lt r^2$$来填充内部的颜色。
+
+但是在实际基于HTML Canvas的实现过程中，可以基于Canva自带的绘制直线和圆的系统API来简化绘制,例如可以使用以下方法绘制空心或者实心圆:
+
+```typescript
+circle(coord: Coordinate, r: number): boolean {
+  coord = this.transform(coord);
+
+  this.deviceContext.beginPath();
+  this.deviceContext.arc(coord.x, coord.y, r, 0, Math.PI * 2);
+
+  if (this.getFillMode() == 'fill') {
+    this.deviceContext.fill();
+  } else {
+    this.deviceContext.stroke();
+  }
+
+  return true;
+}
+```
