@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
-    "types" : ["jest"]
+    "types" : ["jest", "node"]
   },
   "exclude": [
     "node_modules",
