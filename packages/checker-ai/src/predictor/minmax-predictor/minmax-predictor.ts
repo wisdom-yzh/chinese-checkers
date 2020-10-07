@@ -40,7 +40,6 @@ export class MinMaxPredictor extends SimplePredictor {
 
     const faction = this.getCurrentFaction(depth);
     const steps = generateStepsForBoard(root.board, faction);
-    this.getCalculator().updateBoardAndFaction(root.board, faction);
 
     for (const step of steps) {
       root.board.move(step.from, step.to);
@@ -96,6 +95,7 @@ export class MinMaxPredictor extends SimplePredictor {
   }
 
   private createPredictionFromStep(faction: IFaction, step: MoveStep): MovePrediction | null {
+    this.getCalculator().updateBoardAndFaction(this.getBoard(), faction);
     const score = faction === this.faction ? this.getCalculator().getScore(step) : 0;
     if (score < -1) {
       return null;
