@@ -1,11 +1,17 @@
 import { FactionIdentity, MoveStep, IGameModel, IFaction, IBoard } from 'checker-model';
-import { IPredictor } from './types';
+import { IPredictor, IScoreCalculator } from '../types';
 
 export abstract class AbstractPredictor implements IPredictor {
   private gameModel: IGameModel;
+  private calculator: IScoreCalculator;
 
-  constructor(model: IGameModel) {
+  constructor(model: IGameModel, calculator: IScoreCalculator) {
     this.gameModel = model;
+    this.calculator = calculator;
+  }
+
+  getCalculator(): IScoreCalculator {
+    return this.calculator;
   }
 
   getGameModel(): IGameModel {

@@ -1,4 +1,4 @@
-import { Coordinate } from 'checker-model';
+import { Coordinate, IBoard, IFaction, MoveStep } from 'checker-model';
 
 export const dist = (a: Coordinate, b: Coordinate): number => {
   const deltaX = a.x - b.x;
@@ -23,4 +23,17 @@ export const minDistanceFromGoal = (point: Coordinate, goals: Coordinate[]): num
 
 export const stepDistance = (goals: Coordinate[], from: Coordinate, to: Coordinate): number => {
   return minDistanceFromGoal(from, goals) - minDistanceFromGoal(to, goals);
+};
+
+export const generateStepsForBoard = (board: IBoard, faction: IFaction): MoveStep[] => {
+  const steps: MoveStep[] = [];
+
+  faction.getPieces().forEach(piece => {
+    const from = piece.getCoordinate();
+    const goals = board.getAvailableJumpPosition(from);
+    goals.forEach(to => {
+      steps.push({ from, to, piece });
+    });
+  });
+  return steps;
 };

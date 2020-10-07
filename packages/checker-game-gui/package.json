@@ -25,7 +25,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "demo": "cd ./example && webpack"
   },
   "dependencies": {
     "@types/socket.io-client": "^1.4.32",
@@ -35,5 +36,9 @@
     "checker-view": "^0.0.0",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
   }
 }

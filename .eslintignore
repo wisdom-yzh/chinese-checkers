@@ -5,4 +5,5 @@ packages/**/public
 packages/**/build
 packages/checker-doc/**
 **/webpack.config.js
+**/example
 **/node_modules

@@ -1,5 +1,5 @@
 import { IBoard, MoveStep } from 'checker-model';
-import { MovePrediction } from '../types';
+import { MovePrediction } from '../../types';
 
 export type MinMax = 'min' | 'max';
 
@@ -11,6 +11,7 @@ export type MinMaxTreeNode = {
   beta: number;
   score: number;
   steps: MoveStep[];
+  stepToWin: number;
 };
 
 export const createMinMaxTreeRoot = (board: IBoard): MinMaxTreeNode => ({
@@ -21,24 +22,22 @@ export const createMinMaxTreeRoot = (board: IBoard): MinMaxTreeNode => ({
   beta: +Infinity,
   score: -Infinity,
   steps: [],
+  stepToWin: +Infinity,
 });
 
 export const createMinMaxNodeByMovePrediction = (
   parent: MinMaxTreeNode,
   prediction: MovePrediction,
 ): MinMaxTreeNode => {
-  const step = prediction.step as MoveStep;
-  const board = parent.board;
-  board.move(step.from, step.to);
-
   const node: MinMaxTreeNode = {
-    board,
+    board: parent.board,
     boardScore: prediction.score === +Infinity ? +Infinity : parent.boardScore + prediction.score,
     minOrMax: parent.minOrMax === 'max' ? 'min' : 'max',
     alpha: parent.alpha,
     beta: parent.beta,
     score: 0,
     steps: [],
+    stepToWin: +Infinity,
   };
 
   node.score = node.minOrMax === 'max' ? -Infinity : +Infinity;
