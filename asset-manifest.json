@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/chinese-checkers/static/css/main.1bf17e22.chunk.css",
+    "main.js": "/chinese-checkers/static/js/main.d9c50946.chunk.js",
+    "main.js.map": "/chinese-checkers/static/js/main.d9c50946.chunk.js.map",
+    "runtime-main.js": "/chinese-checkers/static/js/runtime-main.ded4409d.js",
+    "runtime-main.js.map": "/chinese-checkers/static/js/runtime-main.ded4409d.js.map",
+    "static/css/2.a97e8b61.chunk.css": "/chinese-checkers/static/css/2.a97e8b61.chunk.css",
+    "static/js/2.7d99af86.chunk.js": "/chinese-checkers/static/js/2.7d99af86.chunk.js",
+    "static/js/2.7d99af86.chunk.js.map": "/chinese-checkers/static/js/2.7d99af86.chunk.js.map",
+    "index.html": "/chinese-checkers/index.html",
+    "precache-manifest.40462dd018998a47f4c013efcfb92b1d.js": "/chinese-checkers/precache-manifest.40462dd018998a47f4c013efcfb92b1d.js",
+    "service-worker.js": "/chinese-checkers/service-worker.js",
+    "static/css/2.a97e8b61.chunk.css.map": "/chinese-checkers/static/css/2.a97e8b61.chunk.css.map",
+    "static/css/main.1bf17e22.chunk.css.map": "/chinese-checkers/static/css/main.1bf17e22.chunk.css.map",
+    "static/js/2.7d99af86.chunk.js.LICENSE.txt": "/chinese-checkers/static/js/2.7d99af86.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ded4409d.js",
+    "static/css/2.a97e8b61.chunk.css",
+    "static/js/2.7d99af86.chunk.js",
+    "static/css/main.1bf17e22.chunk.css",
+    "static/js/main.d9c50946.chunk.js"
+  ]
+}
