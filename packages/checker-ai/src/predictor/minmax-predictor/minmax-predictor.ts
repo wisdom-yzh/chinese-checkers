@@ -95,11 +95,12 @@ export class MinMaxPredictor extends SimplePredictor {
   }
 
   private createPredictionFromStep(faction: IFaction, step: MoveStep): MovePrediction | null {
-    this.getCalculator().updateBoardAndFaction(this.getBoard(), faction);
-    const score = faction === this.faction ? this.getCalculator().getScore(step) : 0;
-    if (score < -1) {
-      return null;
+    if (faction === this.faction && faction.checkWin()) {
+      return { step, score: +Infinity };
     }
+    this.getCalculator().updateBoardAndFaction(this.getBoard(), faction);
+    const scoreByCalculator = this.getCalculator().getScore(step);
+    const score = faction === this.faction ? scoreByCalculator : -scoreByCalculator;
     return { step, score };
   }
 }

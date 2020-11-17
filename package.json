@@ -5,6 +5,7 @@
     "postinstall": "lerna bootstrap",
     "build": "lerna run build",
     "start": "lerna run start --scope=checker-game-webapp --stream",
+    "deploy": "lerna run deploy --scope=checker-game-webapp --stream",
     "gui": "lerna run demo --scope=checker-game-gui --stream",
     "test": "jest --coverage",
     "debug:test": "node --inspect-brk ./node_modules/.bin/jest --runInBand",

@@ -1,0 +1,30 @@
+name: deploy
+
+on:
+  push:
+    branches: [ develop ]
+
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: setup
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+      - run: npm i -g yarn
+      - run: yarn
+      - run: yarn build
+
+      - name: deploy
+        uses: crazy-max/ghaction-github-pages@v1
+        with:
+          build_dir: packages/checker-game-webapp/build
+        env:
+          GITHUB_TOKEN: ${{ secrets.DEPLOY_KEY }}
