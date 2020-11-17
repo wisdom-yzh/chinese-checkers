@@ -10,9 +10,8 @@
     "url": "code@powerpigger.cc:~/chinese-checker"
   },
   "scripts": {
-    "postinstall": "gitbook install",
-    "start": "gitbook serve",
-    "build": "gitbook build"
+    "start": "gitbook install && gitbook serve",
+    "build:doc": "gitbook install && gitbook build"
   },
   "dependencies": {
     "gitbook-cli": "^2.3.2"
